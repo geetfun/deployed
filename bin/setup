@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+
+npm install -D tailwindcss
+npm install -D @tailwindcss/aspect-ratio
+npm install -D @tailwindcss/typography
+npm install -D @tailwindcss/container-queries
+
+bundle

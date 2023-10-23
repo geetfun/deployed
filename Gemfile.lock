@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    deployed (0.1.0)
+    deployed (0.1.2)
       kamal (~> 1.0)
       rails (>= 7.1.1)
       turbo-rails (~> 1.5)
@@ -248,8 +248,8 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  kamal
   deployed!
+  kamal
   puma
   rubocop
   sprockets-rails

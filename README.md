@@ -34,8 +34,11 @@ end
 
 Next, head to `http://localhost:3000/deployed`
 
-## Contributing
-Contribution directions go here.
+## Development
+
+Run `bin/setup` to bootstrap the development environment.
+
+To run tests: `bundle exec rake app:test`. Currently there are no tests, but some will be added soon.
 
 ## License
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
