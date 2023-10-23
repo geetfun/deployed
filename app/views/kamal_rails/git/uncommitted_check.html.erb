@@ -1,0 +1,5 @@
+<%= turbo_frame_tag 'git-status' do %>
+  <% unless @git_status.empty? %>
+    <div class="mt-4 text-sm">You have uncommitted files!</div>
+  <% end %>
+<% end %>

@@ -1,0 +1,128 @@
+<div class="space-y-10 divide-y divide-gray-900/10">
+  <div class="grid grid-cols-1 gap-x-8 gap-y-4 md:grid-cols-3">
+    <div class="px-0">
+      <h2 class="text-base font-semibold leading-7 text-gray-900 flex items-center">
+        <span class="mr-2"><%= rocket_icon %></span>
+        Deployment
+      </h2>
+    </div>
+
+    <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-xl md:col-span-2">
+      <div class="px-4 py-6 sm:p-8 flex flex-col space-y-4">
+        <div class="divide-y divide-gray-100">
+          <div class="!pt-0 py-4">
+            <%= kamal_exec_button(label: 'Deploy', command: 'deploy') %>
+            <!-- Asynchronously fetch git status -->
+            <%= turbo_frame_tag 'git-status', src: git_uncommitted_check_url %>
+          </div>
+          <div class="py-4">
+            <%= kamal_exec_button(label: 'App Details', command: 'app details') %>
+            <%= kamal_exec_button(label: 'App Containers', command: 'app containers') %>
+          </div>
+          <div class="!pb-0 py-4">
+            <%= kamal_exec_button(label: 'App Boot', command: 'app boot') %>
+            <%= kamal_exec_button(label: 'App Start', command: 'app start') %>
+            <%= kamal_exec_button(label: 'App Stop', command: 'app stop') %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 gap-x-8 gap-y-4 pt-10 md:grid-cols-3">
+    <div class="px-0">
+      <h2 class="text-base font-semibold leading-7 text-gray-900 flex items-center">
+        <span class="mr-2"><%= config_icon %></span>
+        Configuration
+      </h2>
+    </div>
+
+    <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-xl md:col-span-2">
+      <div class="px-4 py-6 sm:p-8 flex flex-col space-y-4">
+        <% if KamalRails::DeployConfig.requires_init %>
+          <p class="text-slate-700">Your <span class="font-mono bg-slate-700 px-2 py-0.5 rounded-md text-slate-300">./config/deploy.yml</span> file does not exist. You will need to create it.</p>
+        <% else %>
+          <dl class="divide-y divide-gray-100">
+            <div class="!pt-0 py-3">
+              <dt class="text-sm font-medium text-gray-900">App</dt>
+              <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                <span class="font-mono"><%= KamalRails::DeployConfig.service %></span>
+              </dd>
+            </div>
+            <div class="py-3">
+              <dt class="text-sm font-medium text-gray-900">Image</dt>
+              <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                <span class="font-mono"><%= KamalRails::DeployConfig.image %></span>
+              </dd>
+            </div>
+            <div class="py-3">
+              <dt class="text-sm font-medium text-gray-900">Environment variables</dt>
+              <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                <% if !KamalRails::DeployConfig.env.dig('secret').present? && !KamalRails::DeployConfig.env.dig('clear').present? %>
+                  <p>You have not specified any environment variables in your configuration file. This is likely an error. Please check your <span class="font-mono font-medium">./config/deploy.yml</span> file.</p>
+                <% end %>
+
+                <% if KamalRails::DeployConfig.env.dig('secret').present? %>
+                  <div class="italic mt-4">Secret</div>
+                  <ul>
+                    <% KamalRails::DeployConfig.env.dig('secret').each do |secret_env| %>
+                      <li class="flex space-x-1">
+                        <span class="font-mono"><%= secret_env %></span>
+                        <span><%= right_arrow %></span>
+                        <% if KamalRails::DeployConfig.env_values[secret_env].present? %>
+                          <span class="font-mono text-slate-400">
+                            <%= redacted_string = '*' * (KamalRails::DeployConfig.env_values[secret_env].length - 6) + KamalRails::DeployConfig.env_values[secret_env][-6..-1] %>
+                          </span>
+                        <% else %>
+                          <span class="text-slate-400">Not found</span>
+                        <% end %>
+                      </li>
+                    <% end %>
+                  </ul>
+                <% end %>
+
+                <% if KamalRails::DeployConfig.env['clear'].present? %>
+                  <div class="italic mt-4">Secret</div>
+                  <ul>
+                    <% KamalRails::DeployConfig.env['clear'].each do |secret_env| %>
+                      <li class="flex space-x-1">
+                        <span class="font-mono"><%= secret_env %></span>
+                        <span><%= right_arrow %></span>
+                        <% if KamalRails::DeployConfig.env_values[secret_env].present? %>
+                          <span class="font-mono text-slate-400">
+                            <%= KamalRails::DeployConfig.env_values[secret_env] %>
+                          </span>
+                        <% else %>
+                          <span class="text-slate-400">Not found</span>
+                        <% end %>
+                      </li>
+                    <% end %>
+                  </ul>
+                <% end %>
+              </dd>
+            </div>
+          </dl>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 gap-x-8 gap-y-4 pt-10 md:grid-cols-3">
+    <div class="px-0">
+      <h2 class="text-base font-semibold leading-7 text-gray-900 flex items-center">
+        <span class="mr-2"><%= tools_icon %></span>
+        Utilities
+      </h2>
+    </div>
+
+    <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-xl md:col-span-2">
+      <div class="px-4 py-6 sm:p-8 flex flex-col space-y-4">
+        <div><%= kamal_exec_button(label: 'Perform Healthcheck', command: 'healthcheck --verbose') %></div>
+        <div>
+          <%= kamal_exec_button(label: 'Check Lock Status', command: 'lock status') %>
+          <%= kamal_exec_button(label: 'Release Lock', command: 'lock release') %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Kamal for Rails</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <%= stylesheet_link_tag "kamal_rails/kamal_rails", 'data-turbo-track': 'reload' %>
+  <%= javascript_include_tag "kamal_rails/application", type: "module" %>
+  <script>
+    document.addEventListener('alpine:init', () => {
+      Alpine.store('process', {
+        running: false,
+        start() {
+          this.running = true
+        },
+        stop() {
+          this.running = false
+        },
+        abortInProgress: false,
+        startAbort() {
+          this.abortInProgress = true
+        },
+        resetAbort() {
+          this.abortInProgress = false
+        }
+      })
+
+      Alpine.store('ready', <%= !KamalRails::DeployConfig.requires_init %>)
+    })
+  </script>
+</head>
+<body class="bg-slate-100">
+  <div class="fixed right-5 top-16" x-data x-cloak x-show="$store.process.running">
+    <span class="bg-yellow-400 px-4 py-1 rounded-full font-medium animate-pulse text-yellow-900">Process Running</span>
+  </div>
+  <div class="fixed right-5 top-16" x-data x-cloak x-show="!$store.ready">
+    <span class="bg-red-400 px-4 py-1 rounded-full font-medium text-red-900">Configuration Required</span>
+  </div>
+  <header class="bg-slate-900 fixed left-0 right-0">
+    <div class="px-8 py-2 max-w-5xl mx-auto flex justify-start items-center">
+      <div>
+        <h1 class="font-medium text-3xl font-bold flex">
+          <div class="text-slate-200 flex items-center space-x-2">
+            <div>Kamal</div>
+            <div><%= right_arrow %></div>
+            <div>
+              <div class="text-sm font-bold font-mono border border-slate-200 rounded-md px-4 py-2 border-b-4">
+                DEPLOY
+              </div>
+            </div>
+          </div>
+        </h1>
+      </div>
+      <% if false %>
+      <div class="ml-4">
+        <%= render 'layouts/kamal_rails/nav_menu' %>
+      </div>
+      <% end %>
+    </div>
+  </header>
+  <div class="h-screen flex flex-col pt-[56px]">
+    <div class="flex-1 overflow-y-auto">
+      <div class="p-8 max-w-5xl mx-auto">
+        <%= yield %>
+      </div>
+    </div>
+
+    <div id="deploy-output-container" class="relative flex flex-col bg-white shadow-md px-6 py-8 h-[200px] border-t border-slate-300">
+      <div id="resize-handle" class="bg-slate-200 hover:bg-slate-300 absolute top-0 left-0 right-0 w-full h-[12px]">
+        <div class="w-full flex justify-center absolute top-[-6px] opacity-50">
+          <%= deploy_output_resize_handler %>
+        </div>
+      </div>
+      <div id="scrollable-div" class="rounded-lg bg-slate-900 p-4 font-mono text-sm text-slate-400 overflow-scroll">
+        <div id="deploy-output">
+          <%= deploy_output_intro %>
+          <%= deploy_output_kamal_version %>
+          <%= deploy_output_missing_config %>
+
+          <div class="absolute right-[40px] top-[50px]" x-data x-show="$store.process.running">
+            <%= kamal_abort_button %>
+          </div>
+        </div>
+        <%= deploy_output_spinner %>
+      </div>
+    </div>
+  </div>
+
+  <%= turbo_frame_tag('kamal-init', src: setup_path, target: '_top') if KamalRails::DeployConfig.requires_init %>
+</body>
+</html>

@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+[x-cloak] { display: none !important; }
+
+/* Style for scrollable-div to fill the available vertical space */
+#scrollable-div {
+  flex: 1; /* Grow to fill available vertical space */
+}
+
+#resize-handle {
+  cursor: ns-resize; /* Change cursor to indicate vertical resizing */
+}
+
+/* Style for deploy-output-container */
+#deploy-output-container {
+  min-height: 150px;
+}
