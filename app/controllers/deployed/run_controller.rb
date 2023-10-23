@@ -46,7 +46,6 @@ module Deployed
       output_thread = Thread.new do
         read_io.each_line do |line|
           output = line.strip
-          output = output.gsub('49.13.91.176', '[redacted]')
           text_color_class = 'text-green-400'
 
           # Hackish way of dealing with error messages at the moment
