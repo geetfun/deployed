@@ -30,7 +30,7 @@ module Deployed
         $stdout.reopen(write_io)
 
         # Execute the command
-        exec("kamal #{command}; echo \"[Kamal Rails] End transmission\"")
+        exec("kamal #{command}; echo \"[Deployed Rails] End transmission\"")
       end
 
       lock_process
@@ -112,7 +112,7 @@ module Deployed
       logger.info 'IOError'
     ensure
       sse.write(
-        '[Kamal Rails] End transmission',
+        '[Deployed Rails] End transmission',
         event: 'message'
       )
       sse.close
