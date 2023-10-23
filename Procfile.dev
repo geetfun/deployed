@@ -1,1 +1,1 @@
-tailwind: npx tailwindcss -i ./app/assets/stylesheets/kamal_rails/src/input.css  -o ./app/assets/stylesheets/kamal_rails/kamal_rails.css --watch
+tailwind: npx tailwindcss -i ./app/assets/stylesheets/deployed/src/input.css  -o ./app/assets/stylesheets/deployed/deployed.css --watch

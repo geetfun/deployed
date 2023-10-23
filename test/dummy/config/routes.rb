@@ -1,3 +1,3 @@
 Rails.application.routes.draw do
-  mount KamalRails::Engine => "/kamal"
+  mount Deployed::Engine => "/deployed"
 end

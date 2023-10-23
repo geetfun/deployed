@@ -1,4 +1,4 @@
-KamalRails::Engine.routes.draw do
+Deployed::Engine.routes.draw do
   get 'setup', to: 'setup#new'
   post 'setup', to: 'setup#create'
   get 'config', to: 'config#show'

@@ -9,7 +9,7 @@
 /test/dummy/storage/
 /test/dummy/tmp/
 /test/dummy/.env
-/test/dummy/.kamal
+/test/dummy/.deployed
 /test/dummy/config/deploy.yml
 /node_modules/**/*
 .DS_Store

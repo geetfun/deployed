@@ -1,4 +1,4 @@
 # desc "Explaining what the task does"
-# task :kamal_rails do
+# task :deployed do
 #   # Task goes here
 # end

@@ -1,6 +1,6 @@
-# Kamal Rails
+# Deployed
 
-Kamal Rails is a web interface for the deployment library, [Kamal](https://kamal-deploy.org).
+Deployed is a web interface for the deployment library, [Kamal](https://kamal-deploy.org).
 
 ## Usage
 How to use my plugin.
@@ -9,7 +9,7 @@ How to use my plugin.
 Add this line to your application's Gemfile:
 
 ```ruby
-gem "kamal_rails"
+gem "deployed"
 ```
 
 And then execute:
@@ -19,7 +19,7 @@ $ bundle
 
 Or install it yourself as:
 ```bash
-$ gem install kamal_rails
+$ gem install deployed
 ```
 
 ## Contributing

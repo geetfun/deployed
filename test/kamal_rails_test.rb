@@ -1,7 +1,7 @@
 require "test_helper"
 
-class KamalRailsTest < ActiveSupport::TestCase
+class DeployedTest < ActiveSupport::TestCase
   test "it has a version number" do
-    assert KamalRails::VERSION
+    assert Deployed::VERSION
   end
 end
