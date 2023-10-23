@@ -1,5 +1,7 @@
 # Deployed
 
+[![Gem Version](https://badge.fury.io/rb/deployed.svg)](https://badge.fury.io/rb/deployed)
+
 Deployed is a web interface for the deployment library, [Kamal](https://kamal-deploy.org).
 
 Here is a quick video demo: https://x.com/geetfun/status/1716109581619744781?s=20
