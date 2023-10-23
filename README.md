@@ -2,25 +2,34 @@
 
 Deployed is a web interface for the deployment library, [Kamal](https://kamal-deploy.org).
 
-## Usage
-How to use my plugin.
+## Requirements
+
+Ruby on Rails
 
 ## Installation
 Add this line to your application's Gemfile:
 
 ```ruby
-gem "deployed"
+group :development do
+  gem 'deployed'
+end
 ```
 
-And then execute:
-```bash
-$ bundle
+## Usage
+
+Add the following to your app's routes file:
+
+```ruby
+Rails.application.routes.draw do
+  if Rails.env.development? && defined?(Deployed)
+    mount(Deployed::Engine => '/deployed')
+  end
+
+  # Your other routes...
+end
 ```
 
-Or install it yourself as:
-```bash
-$ gem install deployed
-```
+Next, head to `http://localhost:3000/deployed`
 
 ## Contributing
 Contribution directions go here.
