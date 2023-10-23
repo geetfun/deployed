@@ -47,7 +47,7 @@ module Deployed
       button_tag(
         label,
         type: 'button',
-        onclick: "execKamal('#{command}')",
+        onclick: "execDeployed('#{command}')",
         class: 'rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50',
         'x-bind:disabled' => '$store.process.running',
         'x-bind:class' => "{'opacity-50': $store.process.running}",
@@ -59,7 +59,7 @@ module Deployed
       button_tag(
         'Abort',
         type: 'button',
-        onclick: "abortKamal()",
+        onclick: "abortDeployed()",
         class: 'rounded-md bg-red-600 px-3 py-1.5 text-sm text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600',
         'x-bind:disabled' => '$store.process.abortInProgress',
         'x-bind:class' => "{'opacity-50': $store.process.abortInProgress}",
