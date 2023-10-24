@@ -10,7 +10,7 @@
   <script>
     document.addEventListener('alpine:init', () => {
       Alpine.store('process', {
-        running: false,
+        running: <%= process_running? %>,
         start() {
           this.running = true
         },
