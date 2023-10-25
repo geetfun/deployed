@@ -55,5 +55,9 @@ module Deployed
       end
     end
     helper_method :process_running?
+
+    def current_log_file
+      Rails.root.join(Deployed::DIRECTORY, 'deployments/current.log')
+    end
   end
 end

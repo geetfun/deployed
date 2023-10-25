@@ -29,12 +29,8 @@ module Deployed
 
       # Fork a child process
       Deployed::CurrentExecution.child_pid = fork do
-        # Redirect the standard output to the write end of the pipe
-        $stdout.reopen(write_io)
-        # $stdout.reopen(log_file)
-
         # Execute the command
-        exec("kamal #{command}; echo \"[Deployed Rails] End transmission\"")
+        exec("kamal #{command} > #{current_log_file} 2>%1; echo \"[Deployed Rails] End transmission\" >> #{current_log_file}")
       end
 
       lock_process
