@@ -4,6 +4,22 @@ import Alpine from 'https://cdn.skypack.dev/alpinejs'
 window.Alpine = Alpine
 Alpine.start()
 
+window.pipeLogs = () => {
+  let outputContainerEl = document.getElementById('deploy-output')
+  let spinnerEl = document.getElementById('spinner')
+
+  if (outputContainerEl.innerHTML !== '') {
+    outputContainerEl.innerHTML += "<div class='py-2'></div>"
+  }
+
+  var source = new EventSource(`/deployed/log_output`)
+
+  source.onmessage = (event) => {
+    console.log(event.data)
+  }
+}
+pipeLogs()
+
 window.execDeployed = (commandToRun) => {
   // Let the frontend know we're starting
   Alpine.store('process').start()

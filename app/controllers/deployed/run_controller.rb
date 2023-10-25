@@ -22,12 +22,16 @@ module Deployed
         event: 'message'
       )
 
+      log_file_path = Rails.root.join('.deployed/current.log')
+      log_file = File.open(log_file_path, 'w')
+
       read_io, write_io = IO.pipe
 
       # Fork a child process
       Deployed::CurrentExecution.child_pid = fork do
         # Redirect the standard output to the write end of the pipe
         $stdout.reopen(write_io)
+        # $stdout.reopen(log_file)
 
         # Execute the command
         exec("kamal #{command}; echo \"[Deployed Rails] End transmission\"")
@@ -59,6 +63,7 @@ module Deployed
         end
 
         # Ensure the response stream and the thread are closed properly
+        log_file.close
         sse.close
         response.stream.close
       end
