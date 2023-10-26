@@ -4,31 +4,20 @@ import Alpine from 'https://cdn.skypack.dev/alpinejs'
 window.Alpine = Alpine
 Alpine.start()
 
-window.execDeployed = (commandToRun) => {
-  // Let the frontend know we're starting
-  Alpine.store('process').start()
+const endMarker = '[Deployed Rails] End'
+const outputContainerEl = document.getElementById('deploy-output')
+const spinnerEl = document.getElementById('spinner')
 
-  let outputContainerEl = document.getElementById('deploy-output')
-  let spinnerEl = document.getElementById('spinner')
-
-  if (outputContainerEl.innerHTML !== '') {
-    outputContainerEl.innerHTML += "<div class='py-2'></div>"
-  }
-
+window.pipeLogs = () => {
   spinnerEl.classList.remove('hidden')
-  var source = new EventSource(`/deployed/execute?command=${commandToRun}`)
+  window.logEventSource = new EventSource(`/deployed/log_output`)
 
-  source.onmessage = (event) => {
+  window.logEventSource.onmessage = (event) => {
     if (!Alpine.store('process').running) {
-      source.close()
+      window.logEventSource.close()
     } else {
-      if (event.data.includes('[Deployed Rails] End transmission')) {
-        source.close()
-        outputContainerEl.innerHTML += `<div class="text-slate-400 pb-4">Executed: <span class='text-slate-400 font-semibold'>kamal ${commandToRun}</span></div>`
-        spinnerEl.classList.add('hidden')
-
-        // Let the frontend know we're done
-        Alpine.store('process').stop()
+      if (event.data.includes("[Deployed] End")) {
+        window.stopPipeLogs()
       } else {
         outputContainerEl.innerHTML += event.data
       }
@@ -39,6 +28,46 @@ window.execDeployed = (commandToRun) => {
   }
 }
 
+window.stopPipeLogs = () => {
+  if (typeof(window.logEventSource) !== 'undefined') {
+    window.logEventSource.close()
+  }
+  spinnerEl.classList.add('hidden')
+  Alpine.store('process').stop()
+}
+
+window.execDeployed = (commandToRun) => {
+  Alpine.store('process').start()
+
+  let endpoint = `/deployed/execute`
+
+  // Create a data object with your payload (in this case, a command)
+  const data = { command: commandToRun }
+
+  // Define the fetch options for the POST request
+  const options = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  }
+
+  // Perform the POST request using the fetch API
+  fetch(endpoint, options)
+    .then(response => {
+      if (response.ok) {
+        outputContainerEl.innerHTML += "<div class='py-2'></div>"
+        outputContainerEl.innerHTML += `<div class='text-slate-400'>[Deployed] Command Received: kamal ${commandToRun}</div>`
+        window.pipeLogs()
+        return response.json(); // Parse the JSON response if needed
+      } else {
+        throw new Error('Network response was not ok');
+      }
+    })
+    .catch(error => {
+      console.error('Fetch error:', error)
+    })
+}
+
 window.abortDeployed = () => {
   // Let the frontend know we're starting
   Alpine.store('process').startAbort()
@@ -46,26 +75,34 @@ window.abortDeployed = () => {
   let outputContainerEl = document.getElementById('deploy-output')
   let spinnerEl = document.getElementById('spinner')
 
-  outputContainerEl.innerHTML += `<div class="text-red-400 py-4">Aborting...</div>`
+  outputContainerEl.innerHTML += `<div class="text-red-400">Aborting...</div>`
 
-  var source = new EventSource(`/deployed/cancel`)
+  let endpoint = `/deployed/cancel`
 
-  source.onmessage = (event) => {
-    if (event.data.includes('[Deployed Rails] End transmission')) {
-      source.close()
-
-      spinnerEl.classList.add('hidden')
-
-      // Let the frontend know we're done
-      Alpine.store('process').stop()
-      Alpine.store('process').resetAbort()
-    } else {
-      outputContainerEl.innerHTML += event.data
-    }
-
-    outputContainerEl.scrollIntoView({ behavior: "smooth", block: "end" })
-    spinnerEl.scrollIntoView({ behavior: "smooth", block: "end" })
+  const options = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' }
   }
+
+  // Perform the POST request using the fetch API
+  fetch(endpoint, options)
+    .then(response => {
+      if (response.ok) {
+        window.stopPipeLogs()
+        Alpine.store('process').stop()
+        Alpine.store('process').resetAbort()
+        return response.json(); // Parse the JSON response if needed
+      } else {
+        throw new Error('Network response was not ok');
+      }
+    })
+    .then(data => {
+      console.log(data)
+      outputContainerEl.innerHTML += `<div class="text-yellow-400">Aborted process with PID ${data.message}</div>`
+    })
+    .catch(error => {
+      console.error('Fetch error:', error)
+    })
 }
 
 // Some other JS that probably should be refactored at some point...
