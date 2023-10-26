@@ -84,5 +84,12 @@
   </div>
 
   <%= turbo_frame_tag('deployed-init', src: setup_path, target: '_top') if Deployed::Config.requires_init %>
+
+  <!-- If we refresh the page, we want to see the logs still piping... -->
+  <script>
+    setTimeout(() => {
+      <% if process_running? %>window.pipeLogs()<% end %>
+    }, 1000)
+  </script>
 </body>
 </html>

@@ -5,7 +5,7 @@ module Deployed
     before_action :set_headers
 
     def index
-      initial_log_file_size = File.size(current_log_file)
+      thread_exit_flag = false
 
       thread = Thread.new do
         File.open(current_log_file, 'r') do |file|
@@ -15,6 +15,11 @@ module Deployed
             found_deployed = false
 
             file.each_line do |line|
+              # Check the exit flag
+              if thread_exit_flag
+                break
+              end
+
               css_class = if line.include?('[Deployed]')
                 'text-slate-400'
               else
@@ -28,22 +33,25 @@ module Deployed
               end
             end
 
-            if found_deployed
-              break # Exit the outer loop when "[Deployed]" is found
+            if found_deployed || thread_exit_flag
+              break
             end
           end
         end
       end
 
-      thread.join
-    rescue ActionController::Live::ClientDisconnected
-      logger.info 'Client Disconnected'
-    rescue IOError
-      logger.info 'IOError'
-    ensure
-      sse.close
-      response.stream.close
+      begin
+        thread.join
+      rescue ActionController::Live::ClientDisconnected
+        logger.info 'Client Disconnected'
+      ensure
+        # Set the exit flag to true to signal the thread to exit
+        thread_exit_flag = true
+        sse.close
+        response.stream.close
+      end
     end
+
 
     private
 
