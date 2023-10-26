@@ -66,36 +66,6 @@ window.execDeployed = (commandToRun) => {
     .catch(error => {
       console.error('Fetch error:', error)
     })
-
-  // let outputContainerEl = document.getElementById('deploy-output')
-  // let spinnerEl = document.getElementById('spinner')
-
-  // if (outputContainerEl.innerHTML !== '') {
-  //   outputContainerEl.innerHTML += "<div class='py-2'></div>"
-  // }
-
-  // spinnerEl.classList.remove('hidden')
-  // var source = new EventSource(`/deployed/execute?command=${commandToRun}`)
-
-  // source.onmessage = (event) => {
-  //   if (!Alpine.store('process').running) {
-  //     source.close()
-  //   } else {
-  //     if (event.data.includes('[Deployed Rails] End transmission')) {
-  //       source.close()
-  //       outputContainerEl.innerHTML += `<div class="text-slate-400 pb-4">Executed: <span class='text-slate-400 font-semibold'>kamal ${commandToRun}</span></div>`
-  //       spinnerEl.classList.add('hidden')
-
-  //       // Let the frontend know we're done
-  //       Alpine.store('process').stop()
-  //     } else {
-  //       outputContainerEl.innerHTML += event.data
-  //     }
-  //   }
-
-  //   outputContainerEl.scrollIntoView({ behavior: "smooth", block: "end" })
-  //   spinnerEl.scrollIntoView({ behavior: "smooth", block: "end" })
-  // }
 }
 
 window.abortDeployed = () => {
@@ -105,7 +75,7 @@ window.abortDeployed = () => {
   let outputContainerEl = document.getElementById('deploy-output')
   let spinnerEl = document.getElementById('spinner')
 
-  outputContainerEl.innerHTML += `<div class="text-red-400 py-4">Aborting...</div>`
+  outputContainerEl.innerHTML += `<div class="text-red-400">Aborting...</div>`
 
   let endpoint = `/deployed/cancel`
 
@@ -125,6 +95,10 @@ window.abortDeployed = () => {
       } else {
         throw new Error('Network response was not ok');
       }
+    })
+    .then(data => {
+      console.log(data)
+      outputContainerEl.innerHTML += `<div class="text-yellow-400">Aborted process with PID ${data.message}</div>`
     })
     .catch(error => {
       console.error('Fetch error:', error)

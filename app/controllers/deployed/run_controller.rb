@@ -25,6 +25,7 @@ module Deployed
 
     # Endpoint to cancel currently running process
     def cancel
+      pid = stored_pid
       if process_running?
         # If a process is running, get the PID and attempt to kill it
         begin
@@ -34,7 +35,7 @@ module Deployed
           release_process
         end
       end
-      render json: { message: 'OK' }
+      render json: { message: pid }
     end
 
     private
