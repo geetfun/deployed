@@ -9,10 +9,6 @@ const outputContainerEl = document.getElementById('deploy-output')
 const spinnerEl = document.getElementById('spinner')
 
 window.pipeLogs = () => {
-  if (outputContainerEl.innerHTML !== '') {
-    outputContainerEl.innerHTML += "<div class='py-2'></div>"
-  }
-
   spinnerEl.classList.remove('hidden')
   window.logEventSource = new EventSource(`/deployed/log_output`)
 
@@ -59,6 +55,8 @@ window.execDeployed = (commandToRun) => {
   fetch(endpoint, options)
     .then(response => {
       if (response.ok) {
+        outputContainerEl.innerHTML += "<div class='py-2'></div>"
+        outputContainerEl.innerHTML += `<div class='text-slate-400'>[Deployed] Command Received: kamal ${commandToRun}</div>`
         window.pipeLogs()
         return response.json(); // Parse the JSON response if needed
       } else {

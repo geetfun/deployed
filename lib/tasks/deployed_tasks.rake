@@ -15,13 +15,18 @@ namespace :deployed do
     File.open(log_file, 'a') do |file|
       IO.popen("kamal #{command}") do |io|
         start_time = Time.now
+
         file.puts("[Deployed] > kamal #{command}")
+        file.fsync
+
         io.each_line do |line|
           file.puts line
+          file.fsync  # Force data to be written to disk immediately
         end
         end_time = Time.now
         file.puts("[Deployed] Finished in #{end_time - start_time} seconds")
         file.puts("[Deployed] End")
+        file.fsync
 
         # Delete lockfile
         File.delete(Rails.root.join(Deployed::DIRECTORY, 'process.lock'))
